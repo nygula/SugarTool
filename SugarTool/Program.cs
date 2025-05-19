@@ -77,19 +77,34 @@ static void GenerateEntities(string xml)
         sb.AppendLine("    }");
         sb.AppendLine("}");
 
-        //获取tables的Output属性
-            
-
-
         if (!Directory.Exists(output))
             Directory.CreateDirectory(output);
-        var filename = Path.Combine(output, $"{table.Attribute("Name").Value}.cs");
-        File.WriteAllText(filename, sb.ToString());
-
-
-        //var outputPath = Path.Combine(output.FullName, $"{Path.GetFileNameWithoutExtension(input.Name)}.cs");
-        //File.WriteAllText(outputPath, code);
-        Console.WriteLine($"生成成功: {filename}");
+        var classname = table.Attribute("Description").Value;
+        if (!string.IsNullOrWhiteSpace(classname))
+        {
+            if (classname.IndexOf("。") > 0)
+            {
+                var splitclassname = classname.Trim().Split("。", StringSplitOptions.RemoveEmptyEntries);
+                var filename = Path.Combine(output, $"{splitclassname[0]}.cs");
+                File.WriteAllText(filename, sb.ToString());
+                Console.WriteLine($"生成成功: {filename}");
+            }
+            else
+            {
+                var filename = Path.Combine(output, $"{classname.Trim()}.cs");
+                File.WriteAllText(filename, sb.ToString());
+                Console.WriteLine($"生成成功: {filename}");
+            }
+        }
+        else
+        {
+            classname = table.Attribute("Name").Value;
+            var filename = Path.Combine(output, $"{classname}.cs");
+            File.WriteAllText(filename, sb.ToString());
+            Console.WriteLine($"生成成功: {filename}");
+        }
+      
+       
     }
 
 

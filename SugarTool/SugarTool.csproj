@@ -24,8 +24,8 @@
 	<PropertyGroup>
 		<PackageId>$(AssemblyName)</PackageId>
 		<Authors>$(Company)</Authors>
-		<PackageProjectUrl>#</PackageProjectUrl>
-		<RepositoryUrl>#</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/nygula/SugarTool</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/nygula/SugarTool</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>sqlsugar;$(AssemblyName)</PackageTags>
 		<PackageReleaseNotes></PackageReleaseNotes>
