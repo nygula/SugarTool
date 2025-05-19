@@ -12,7 +12,7 @@
 		<Description>xml转sqlsugar类库工具</Description>
 		<ToolCommandName>SugarTool</ToolCommandName>
 		<PackageOutputPath>./nupkg</PackageOutputPath>
-		<VersionPrefix>1.0</VersionPrefix>
+		<VersionPrefix>1.1</VersionPrefix>
 		<VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
