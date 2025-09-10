@@ -55,8 +55,10 @@ static void GenerateEntities(string xml)
         sb.AppendLine("using SqlSugar;");
         sb.AppendLine($"namespace {root.Attribute("NameSpace").Value}");
         sb.AppendLine("{");
+        var description = table.Attribute("Description").Value;
+
         // Class header
-        sb.AppendLine($"    [SugarTable(\"{table.Attribute("Name").Value}\")]");
+        sb.AppendLine($"    [SugarTable(\"{table.Attribute("Name").Value}\",TableDescription = \"{description}\")]");
         foreach (var index in table.Descendants(ns + "Index"))
         {
             var indexAttr = GenerateIndex(index);
@@ -81,26 +83,10 @@ static void GenerateEntities(string xml)
 
         if (!Directory.Exists(output))
             Directory.CreateDirectory(output);
-        var classname = table.Attribute("Description").Value;
-        if (!string.IsNullOrWhiteSpace(classname))
+       
         {
-            if (classname.IndexOf("。") > 0)
-            {
-                var splitclassname = classname.Trim().Split("。", StringSplitOptions.RemoveEmptyEntries);
-                var filename = Path.Combine(output, $"{splitclassname[0]}.cs");
-                File.WriteAllText(filename, sb.ToString());
-                Console.WriteLine($"生成成功: {filename}");
-            }
-            else
-            {
-                var filename = Path.Combine(output, $"{classname.Trim()}.cs");
-                File.WriteAllText(filename, sb.ToString());
-                Console.WriteLine($"生成成功: {filename}");
-            }
-        }
-        else
-        {
-            classname = table.Attribute("Name").Value;
+            var classname = table.Attribute("Name").Value;
+
             var filename = Path.Combine(output, $"{classname}.cs");
             File.WriteAllText(filename, sb.ToString());
             Console.WriteLine($"生成成功: {filename}");
@@ -127,7 +113,19 @@ static string GenerateProperty(XElement column)
     if (column.Attribute("Nullable")?.Value == "False")
         colAttrs.Add("IsNullable = false");
     if (column.Attribute("Length") != null)
-        colAttrs.Add($"Length = {column.Attribute("Length").Value}");
+    {
+        if(column.Attribute("Length").Value == "-1")
+        {
+            colAttrs.Add($"Length = 3000");
+
+        }
+        else
+        {
+            colAttrs.Add($"Length = {column.Attribute("Length").Value}");
+
+        }
+
+    }
 
     if (colAttrs.Count > 0)
         sb.AppendLine($"        [SugarColumn({string.Join(", ", colAttrs)})]");
@@ -145,12 +143,12 @@ static string GenerateIndex(XElement index)
     var columns = index.Attribute("Columns").Value.Split(',');
     var indexName = $"IX_{index.Parent.Parent.Attribute("Name").Value}_{string.Join("_", columns)}";
 
-    return $@"        [SugarIndex(""{indexName}"", nameof({string.Join("), nameof(", columns)}), Unique = {index.Attribute("Unique")?.Value ?? "false"})]";
+    return $@"        [SugarIndex(""{indexName}"", nameof({string.Join("),  OrderByType.Asc,nameof(", columns)}), OrderByType.Asc,IsUnique = {(index.Attribute("Unique")?.Value ?? "false").ToLower()})]";
 }
 
 static string MapDataType(string xmlType) => xmlType switch
 {
-    "Int64" => "Long",
+    "Int64" => "long",
     "Int32" => "int",
     "String" => "string",
     "DateTime" => "DateTime",
