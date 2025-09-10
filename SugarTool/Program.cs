@@ -126,7 +126,9 @@ static string GenerateProperty(XElement column)
         }
 
     }
-
+    sb.AppendLine($"        /// <summary>");
+    sb.AppendLine($"        /// {column.Attribute("Description").Value}");
+    sb.AppendLine($"        /// </summary>");
     if (colAttrs.Count > 0)
         sb.AppendLine($"        [SugarColumn({string.Join(", ", colAttrs)})]");
 
