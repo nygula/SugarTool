@@ -57,6 +57,11 @@ static void GenerateEntities(string xml)
         sb.AppendLine("{");
         // Class header
         sb.AppendLine($"    [SugarTable(\"{table.Attribute("Name").Value}\")]");
+        foreach (var index in table.Descendants(ns + "Index"))
+        {
+            var indexAttr = GenerateIndex(index);
+            sb.AppendLine(indexAttr);
+        }
         sb.AppendLine($"    public partial class {table.Attribute("Name").Value} : {root.Attribute("BaseClass").Value}");
         sb.AppendLine("    {");
 
@@ -67,14 +72,11 @@ static void GenerateEntities(string xml)
             sb.AppendLine(prop);
         }
 
-        // Indexes
-        foreach (var index in table.Descendants(ns + "Index"))
-        {
-            var indexAttr = GenerateIndex(index);
-            sb.AppendLine(indexAttr);
-        }
+       
 
         sb.AppendLine("    }");
+        // Indexes
+     
         sb.AppendLine("}");
 
         if (!Directory.Exists(output))
@@ -148,13 +150,13 @@ static string GenerateIndex(XElement index)
 
 static string MapDataType(string xmlType) => xmlType switch
 {
-    "Int64" => "long",
+    "Int64" => "Long",
     "Int32" => "int",
     "String" => "string",
     "DateTime" => "DateTime",
-    "Double" => "double",
-    "Boolean" => "boolean",
-    "Decimal" => "decimal",
+    "Double" => "Double",
+    "Boolean" => "Boolean",
+    "Decimal" => "Decimal",
 
     _ => "object"
 };
